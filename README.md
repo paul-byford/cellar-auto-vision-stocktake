@@ -3,10 +3,6 @@
 A vision-based wine stock-take web app. Photograph a shelf, get back a
 structured inventory with per-bottle confidence scores. Built as an exploration of AI vision powered stocktaking and AI & Automation at Humble Group.
 
-## Live demo
-
-`https://cellar-auto-vision-stocktake.vercel.app` _(replace with your Vercel URL)_
-
 ## The problem
 
 Stock-take in hospitality is the highest-leverage administrative task in the
