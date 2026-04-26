@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { StatusStage } from "@/components/status-line";
 import { PipelinePanel } from "@/components/pipeline-panel";
@@ -50,12 +51,23 @@ export function SampleShelves({
   const isDone = stage === "done";
   const isError = stage === "error";
 
+  const [dismissedKey, setDismissedKey] = useState<Sample["key"] | null>(null);
+  // Reset dismissal whenever a new analysis starts
+  useEffect(() => {
+    if (stage === "detecting") setDismissedKey(null);
+  }, [stage]);
+
+  const handleViewResults = (key: Sample["key"]) => {
+    setDismissedKey(key);
+    onViewResults?.();
+  };
+
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-rule border border-rule">
         {SAMPLES.map((s) => {
           const isActive = active === s.key;
-          const showOverlay = isActive && (isRunning || isDone || isError);
+          const showOverlay = isActive && (isRunning || isDone || isError) && dismissedKey !== s.key;
 
           return (
             <div key={s.key} className="relative bg-bone">
@@ -119,7 +131,7 @@ export function SampleShelves({
                 <div className="absolute inset-0 pointer-events-none p-4 sm:p-5">
                   <div className="relative w-full aspect-[4/3] flex items-center justify-center">
                     <div className="pointer-events-auto">
-                      <PipelinePanel stage={stage} onViewResults={onViewResults} />
+                      <PipelinePanel stage={stage} onViewResults={() => handleViewResults(s.key)} />
                     </div>
                   </div>
                 </div>
@@ -129,9 +141,9 @@ export function SampleShelves({
         })}
       </div>
 
-      {(isDone || isError) && active && onViewResults && (
+      {(isDone || isError) && active && onViewResults && dismissedKey !== active && (
         <button
-          onClick={onViewResults}
+          onClick={() => handleViewResults(active)}
           className="w-full mt-px py-3 bg-bone border border-rule font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink hover:border-ink transition-colors"
         >
           {isError ? "↓ View error" : "↓ Results ready"}

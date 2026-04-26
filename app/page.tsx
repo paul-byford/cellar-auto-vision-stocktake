@@ -25,6 +25,7 @@ export default function Page() {
   const [rows, setRows] = useState<WineRow[]>([]);
   const [error, setError] = useState<ApiErrorBody | null>(null);
   const [activeSample, setActiveSample] = useState<Sample["key"] | null>(null);
+  const [uploadOverlayDismissed, setUploadOverlayDismissed] = useState(false);
 
   const demoRef = useRef<HTMLDivElement>(null);
   const uploadRef = useRef<HTMLDivElement>(null);
@@ -141,6 +142,7 @@ export default function Page() {
   }, [rows]);
 
   useEffect(() => {
+    setUploadOverlayDismissed(false);
     return () => {
       if (loaded?.src.startsWith("blob:")) URL.revokeObjectURL(loaded.src);
     };
@@ -249,10 +251,13 @@ export default function Page() {
               onFile={analyseFile}
               disabled={stage === "detecting" || stage === "identifying"}
             />
-            {loaded && !activeSample && (stage === "detecting" || stage === "identifying" || stage === "done" || stage === "error") && (
+            {loaded && !activeSample && !uploadOverlayDismissed && (stage === "detecting" || stage === "identifying" || stage === "done" || stage === "error") && (
               <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-bone/70">
                 <div className="pointer-events-auto">
-                  <PipelinePanel stage={stage} onViewResults={scrollToResults} />
+                  <PipelinePanel
+                    stage={stage}
+                    onViewResults={() => { setUploadOverlayDismissed(true); scrollToResults(); }}
+                  />
                 </div>
               </div>
             )}
@@ -322,7 +327,10 @@ export default function Page() {
                     Export CSV
                   </button>
                   <button
-                    onClick={reset}
+                    onClick={() => {
+                      reset();
+                      demoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
                     className="inline-flex items-center gap-2 border border-rule px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted hover:text-ink hover:border-ink transition-colors"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />

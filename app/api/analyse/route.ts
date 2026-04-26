@@ -30,6 +30,10 @@ async function loadImageFromRequest(req: Request): Promise<{
     if (!(file instanceof File)) {
       throw httpError("bad_image", "No image file uploaded");
     }
+    const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+    if (file.size > MAX_BYTES) {
+      throw httpError("bad_image", "Image too large — please use an image under 10 MB", 413);
+    }
     const buf = Buffer.from(await file.arrayBuffer());
     const mediaType = inferMediaType(
       file.name,
@@ -43,17 +47,18 @@ async function loadImageFromRequest(req: Request): Promise<{
     if (!body.imageUrl || typeof body.imageUrl !== "string") {
       throw httpError("bad_image", "imageUrl missing");
     }
-    // Same-origin sample images: resolve against the request URL
-    const url = body.imageUrl.startsWith("http")
-      ? body.imageUrl
-      : new URL(body.imageUrl, req.url).toString();
+    // Only allow same-origin relative paths to prevent SSRF
+    if (!body.imageUrl.startsWith("/")) {
+      throw httpError("bad_image", "Invalid image URL", 400);
+    }
+    const url = new URL(body.imageUrl, req.url).toString();
     const resp = await fetch(url);
     if (!resp.ok) {
       throw httpError("bad_image", `Could not load sample image (${resp.status})`);
     }
     const buf = Buffer.from(await resp.arrayBuffer());
     const mediaType = inferMediaType(
-      url,
+      body.imageUrl,
       (resp.headers.get("content-type") as ImageMediaType) || "image/jpeg"
     );
     return { data: buf.toString("base64"), mediaType };
