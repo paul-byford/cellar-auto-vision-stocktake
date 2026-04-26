@@ -11,9 +11,9 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "public")
 
 PLACEHOLDERS = [
     {"path": "hero-shelf.jpg", "size": (1600, 1200), "label": "HERO PLACEHOLDER", "subtitle": "Replace with a wine-shelf photograph."},
-    {"path": "samples/easy.jpg", "size": (1200, 900), "label": "EASY", "subtitle": "Front-facing labels — replace with real photo."},
-    {"path": "samples/medium.jpg", "size": (1200, 900), "label": "MEDIUM", "subtitle": "Mixed angles — replace with real photo."},
-    {"path": "samples/hard.jpg", "size": (1200, 900), "label": "HARD", "subtitle": "Cellar lighting — replace with real photo."},
+    {"path": "samples/easy.jpg", "size": (1200, 900), "label": "EASY", "subtitle": "Front-facing labels."},
+    {"path": "samples/medium.jpg", "size": (1200, 900), "label": "MEDIUM", "subtitle": "Mixed angles."},
+    {"path": "samples/hard.jpg", "size": (1200, 900), "label": "HARD", "subtitle": "Cellar lighting."},
 ]
 
 BONE = (245, 243, 238)

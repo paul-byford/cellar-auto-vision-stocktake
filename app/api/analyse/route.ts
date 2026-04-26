@@ -3,9 +3,9 @@ import { runPipeline } from "@/lib/pipeline";
 import type { ApiErrorBody, ApiErrorCode } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 65;
 
-const TIMEOUT_MS = 55_000;
+const TIMEOUT_MS = 60_000;
 
 type ImageMediaType = "image/jpeg" | "image/png" | "image/webp" | "image/gif";
 

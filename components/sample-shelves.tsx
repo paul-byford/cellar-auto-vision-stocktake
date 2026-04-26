@@ -29,7 +29,7 @@ export const SAMPLES: Sample[] = [
   {
     key: "hard",
     difficulty: "Hard",
-    caption: "Cellar lighting",
+    caption: "Low light, obscured labels",
     imageUrl: "/samples/humble-grape-hard.webp",
   },
 ];

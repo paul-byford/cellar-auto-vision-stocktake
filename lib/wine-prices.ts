@@ -107,6 +107,23 @@ export const winePrices: Record<string, number> = {
   "hambledon classic cuvee": 32,
   "gusbourne brut reserve": 36,
   "chapel down classic": 24,
+
+  // manual overrides for common abbreviations and misspellings
+  "Genevieve Brut Rosé": 35,
+  "Podere Ruggeri Corsini Dolcetto d'Alba": 13,
+  "Villa Melnik White Cuvée Family Tradition": 24,
+  "Château Conseillante Pomerol": 195,
+  "Château Clonec Châteauneuf-du-Pape": 35,
+  "Echézeaux": 275,
+  "Le Garage": 30,
+  "Côte de Nuits-Villages": 40,
+  "Maréchal": 36,
+  "Legone": 34,
+  "Culter": 28,
+  "Quinta de Linhares": 40,
+  "Storm": 38,
+  "The Islander": 125,
+  "Resaes": 42,
 };
 
 const norm = (s: string) =>

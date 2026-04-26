@@ -7,8 +7,8 @@ const REPO_URL = "https://github.com/paul-byford/cellar-auto-vision-stocktake";
 
 const COPY: Record<ApiErrorCode, { title: string; body: string }> = {
   timeout: {
-    title: "The cellar's complicated",
-    body: "We didn't get a response in time. Try a clearer photo, or pick a sample shelf below.",
+    title: "Analysis timed out",
+    body: "Your image took longer than 60 seconds to process. Shelves with fewer bottles and good front-facing lighting analyse fastest — or try one of the sample shelves below.",
   },
   no_bottles: {
     title: "We couldn't see any bottles",
@@ -23,8 +23,8 @@ const COPY: Record<ApiErrorCode, { title: string; body: string }> = {
     body: "Make sure it's a JPG, PNG, or WebP under a few megabytes.",
   },
   server_error: {
-    title: "Something broke",
-    body: "Not your fault. The repo is below if you want to dig in.",
+    title: "Something went wrong",
+    body: "An unexpected error occurred on our end — please try again. If it keeps happening, the samples below are a good way to check the demo is working.",
   },
 };
 
