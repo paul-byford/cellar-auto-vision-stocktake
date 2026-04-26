@@ -44,7 +44,7 @@ counter on the summary strip.
             │       app/api/analyse/route.ts (Node runtime)   │
             │                                                 │
             │   ┌─────────────────────────────────────────┐   │
-            │   │ Pass 1 — Detection (Claude Sonnet 4.5)  │   │
+            │   │ Pass 1 — Detection (Claude Sonnet 4.6)  │   │
             │   │ → { bottles: [{id, bbox}], notes }      │   │
             │   └─────────────────┬───────────────────────┘   │
             │                     ▼                           │
@@ -62,7 +62,7 @@ counter on the summary strip.
                          AnalysisResult JSON
 ```
 
-Both passes use `claude-sonnet-4-5`. Sonnet seemed the right fit here, Opus is
+Both passes use `claude-sonnet-4-6`. Sonnet seemed the right fit here, Opus is
 slower for an interactive demo and Haiku struggles with label legibility
 on the harder samples. The two-pass split is the durable architectural
 decision, not the model choice.

@@ -12,4 +12,4 @@ export function getAnthropic(): Anthropic {
   return _client;
 }
 
-export const VISION_MODEL = "claude-sonnet-4-5";
+export const VISION_MODEL = "claude-sonnet-4-6";

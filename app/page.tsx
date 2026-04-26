@@ -225,7 +225,7 @@ export default function Page() {
             </div>
             <div className="mt-10 hairline-t pt-5 grid grid-cols-3 gap-4 max-w-[420px]">
               <Stat label="Passes" value="2" suffix="" />
-              <Stat label="Model" value="Sonnet 4.5" />
+              <Stat label="Model" value="Sonnet 4.6" />
               <Stat label="Median" value="12s" />
             </div>
           </div>
