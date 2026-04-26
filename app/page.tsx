@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Download, RotateCcw } from "lucide-react";
 import { GithubMark } from "@/components/icons";
 import { HeroAnimation } from "@/components/hero-animation";
-import { SAMPLES, SampleShelves, type Sample } from "@/components/sample-shelves";
+import { SampleShelves, type Sample } from "@/components/sample-shelves";
 import { UploadZone } from "@/components/upload-zone";
 import { StatusLine, type StatusStage } from "@/components/status-line";
 import { PipelinePanel } from "@/components/pipeline-panel";
