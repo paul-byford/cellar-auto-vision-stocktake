@@ -29,8 +29,11 @@ export const winePrices: Record<string, number> = {
   "louis latour pouilly fuisse": 28,
   "joseph drouhin chablis": 24,
   "william fevre chablis": 26,
+  "jayer-gilles echezeaux": 350,
+  "gevrey chambertin": 55,
 
   // Loire
+  "la jalousie": 30,
   "domaine vacheron sancerre": 28,
   "henri bourgeois sancerre": 24,
   "pascal jolivet sancerre": 26,
@@ -68,20 +71,36 @@ export const winePrices: Record<string, number> = {
   "marques de murrieta rioja": 26,
 
   // Portugal
+  "quinta de saes": 26,
   "taylors lbv port": 22,
   "graham six grapes": 24,
   "fonseca bin 27": 18,
 
-  // New World
-  "cloudy bay sauvignon blanc": 28,
-  "penfolds bin 389": 70,
-  "penfolds grange": 700,
+  // New World — California
+  "merryvale": 99,
+  "starmont": 20,
+  "dutton-goldfield": 40,
+  "kistler chardonnay": 110,
   "ridge monte bello": 280,
   "opus one": 380,
   "screaming eagle": 4500,
-  "kistler chardonnay": 110,
+
+  // New World — Oregon
+  "lange estate": 54,
+
+  // New World — New Zealand
+  "cloudy bay sauvignon blanc": 28,
+  "hawkshead": 35,
   "felton road pinot noir": 60,
   "te mata coleraine": 75,
+
+  // New World — Australia
+  "penfolds bin 389": 70,
+  "penfolds grange": 700,
+  "the islander estate": 35,
+
+  // New World — South Africa
+  "storm wines": 35,
 
   // English sparkling
   "nyetimber classic cuvee": 38,
