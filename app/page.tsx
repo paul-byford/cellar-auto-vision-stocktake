@@ -216,7 +216,7 @@ export default function Page() {
                 onChange={(e) => {
                   const f = e.target.files?.[0];
                   if (f) {
-                    demoRef.current?.scrollIntoView({ behavior: "smooth" });
+                    uploadRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
                     analyseFile(f);
                   }
                   e.currentTarget.value = "";

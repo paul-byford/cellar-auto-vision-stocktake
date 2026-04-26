@@ -1,8 +1,7 @@
 # Cellar — vision stock-take
 
-A vision-based wine stock-take web app. Photograph a shelf; get back a
-structured inventory with per-bottle confidence scores. Built as a job-application
-artefact for the AI & Automation Lead role at Humble Group.
+A vision-based wine stock-take web app. Photograph a shelf, get back a
+structured inventory with per-bottle confidence scores. Built as an exploration of AI vision powered stocktaking and AI & Automation at Humble Group.
 
 ## Live demo
 
@@ -15,22 +14,22 @@ business: it sets reorder, drives margin, and feeds whatever marketing and
 revenue work runs on top of it. It's also the one most operators do badly,
 because it's manual, slow, and easy to delegate to whoever is least busy.
 
-Naive prompting — "look at this photo and tell me what's on the shelf" —
+Naive prompting,"look at this photo and tell me what's on the shelf",
 fails on this task in two predictable ways. The model hallucinates vintages
 it can't actually see, and it confabulates familiar producers when the label
 is unclear. Both failures look plausible on the page and only show up at
 reorder time, when the numbers don't match the cellar.
 
 This app uses a **two-pass pipeline** that decouples those failure modes.
-The first pass detects discrete bottles and returns positions only — no
-identification. The second pass takes the full image and the bottle list and
+The first pass detects discrete bottles and returns positions only (no
+identification). The second pass takes the full image and the bottle list and
 extracts label content, with explicit instructions never to guess vintages
 and to lower confidence rather than invent details. Fields the model can't
 see come back as `null`, which the UI flags for human review.
 
 **Low confidence is a feature, not a bug.** A senior system is allowed to
 say "I don't know" and surface that for review. A junior one fabricates and
-moves on. The whole demo is built around that distinction — every row below
+moves on. The whole demo is built around that distinction, where every row below
 70% confidence is tinted, badged, and lifted out into a "needs review"
 counter on the summary strip.
 
@@ -67,15 +66,17 @@ counter on the summary strip.
                          AnalysisResult JSON
 ```
 
-Both passes use `claude-sonnet-4-5`. Sonnet is the right fit here — Opus is
-too slow for an interactive demo and Haiku struggles with label legibility
+Both passes use `claude-sonnet-4-5`. Sonnet seemed the right fit here, Opus is
+slower for an interactive demo and Haiku struggles with label legibility
 on the harder samples. The two-pass split is the durable architectural
 decision, not the model choice.
 
 ## What's next
 
+- **Inventory whitelist.** To provide the app with a whitelist of known SKUs from the inventory database. This will enable identification to be far more efficient and reliable, current the app relies of general visual identification
+- **Inventory integration.** To compare expected quantities from the inventory with discovered counts from the live imagery and enable results of the stock take to be saved to the inventory database
 - **Reorder automation.** Once stock-take is reliable, the next click is a
-  reorder draft sent to the supplier — bottle counts plus a target par level
+  reorder draft sent to the supplier - bottle counts plus a target par level
   per SKU, with the system flagging low-confidence rows for human approval
   before sending.
 - **Marketing content generation.** A weekly cellar snapshot — "this week's
@@ -106,17 +107,6 @@ To test the pipeline on a single image without the UI:
 npx tsx scripts/test-pipeline.ts ./path/to/shelf.jpg
 ```
 
-### Replace the placeholder photos before deploying
-
-The repo ships with four clearly-stamped placeholder JPGs. Replace them with
-real photographs:
-
-- `public/hero-shelf.jpg` — backdrop for the hero animation
-- `public/samples/{easy,medium,hard}.jpg` — three demo shelves of escalating
-  difficulty
-
-See `public/samples/README.md` for sourcing notes.
-
 ## Honest limitations
 
 A short, partial list of what doesn't work yet — kept short rather than
@@ -130,8 +120,8 @@ it sounds like an engineer wrote it.
   reads them inconsistently; treat as advisory.
 - **Very dark cellars.** Below ~30 lux, label legibility collapses. A
   pre-flash from the phone helps more than the prompt does.
-- **Unusual bottle shapes.** Bocksbeutel (Franconian), clavelin (Jura), and
-  some half-bottles confuse the bottle-count pass. Sizes other than 750ml
+- **Unusual bottle shapes.** Bocksbeutel, for example, and
+  some half-bottles may confuse the bottle-count pass. Sizes other than 750ml
   default to 750 in the output unless the model can read the label
   explicitly.
 - **No persistence.** This is a demo, not a product — every analyse is
