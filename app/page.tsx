@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { Download, RotateCcw } from "lucide-react";
 import { GithubMark } from "@/components/icons";
@@ -9,6 +8,7 @@ import { HeroAnimation } from "@/components/hero-animation";
 import { SAMPLES, SampleShelves, type Sample } from "@/components/sample-shelves";
 import { UploadZone } from "@/components/upload-zone";
 import { StatusLine, type StatusStage } from "@/components/status-line";
+import { PipelinePanel } from "@/components/pipeline-panel";
 import { SummaryStrip } from "@/components/summary-strip";
 import { ResultsTable, exportCsv } from "@/components/results-table";
 import { ErrorBanner, AllLowConfidenceBanner } from "@/components/error-states";
@@ -24,10 +24,11 @@ export default function Page() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [rows, setRows] = useState<WineRow[]>([]);
   const [error, setError] = useState<ApiErrorBody | null>(null);
-  const [hoveredBottleIds, setHoveredBottleIds] = useState<string[] | null>(null);
   const [activeSample, setActiveSample] = useState<Sample["key"] | null>(null);
 
   const demoRef = useRef<HTMLDivElement>(null);
+  const uploadRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLElement>(null);
 
   const reset = useCallback(() => {
     setLoaded(null);
@@ -35,7 +36,6 @@ export default function Page() {
     setResult(null);
     setRows([]);
     setError(null);
-    setHoveredBottleIds(null);
     setActiveSample(null);
   }, []);
 
@@ -119,13 +119,15 @@ export default function Page() {
     }
   }, []);
 
-  // Scroll to demo + auto-pick first sample when "Try a sample" is clicked
   const trySample = useCallback(() => {
     demoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setTimeout(() => analyseSample(SAMPLES[0]), 500);
-  }, [analyseSample]);
+  }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToResults = useCallback(() => {
+    resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   const downloadCsv = useCallback(() => {
     const csv = exportCsv(rows);
@@ -186,8 +188,7 @@ export default function Page() {
               <span className="text-muted">Read the inventory.</span>
             </h1>
             <p className="mt-6 max-w-[44ch] text-[15px] sm:text-[16px] text-muted">
-              A vision pipeline for hospitality stock-take. Built in a week,
-              ready in production.
+              A vision pipeline for hospitality stock-take.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button
@@ -197,7 +198,10 @@ export default function Page() {
                 Try a sample
               </button>
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => {
+                  uploadRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  fileInputRef.current?.click();
+                }}
                 className="border border-ink px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] hover:bg-ink hover:text-bone transition-colors"
               >
                 Upload your own
@@ -237,19 +241,28 @@ export default function Page() {
             onPick={analyseSample}
             active={activeSample}
             disabled={stage === "detecting" || stage === "identifying"}
+            stage={stage}
+            onViewResults={scrollToResults}
           />
-          <div className="mt-8">
+          <div ref={uploadRef} className="mt-8 relative">
             <UploadZone
               onFile={analyseFile}
               disabled={stage === "detecting" || stage === "identifying"}
             />
+            {loaded && !activeSample && (stage === "detecting" || stage === "identifying" || stage === "done" || stage === "error") && (
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center bg-bone/70">
+                <div className="pointer-events-auto">
+                  <PipelinePanel stage={stage} onViewResults={scrollToResults} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* RESULTS */}
       {(loaded || error) && (
-        <section className="hairline-b">
+        <section ref={resultsRef} className="hairline-b">
           <div className="max-w-[1200px] mx-auto px-5 sm:px-8 py-10 sm:py-14">
             <SectionLabel num="02" title="Inventory" />
 
@@ -262,49 +275,42 @@ export default function Page() {
               </div>
             )}
 
-            {loaded && (
-              <div className="relative w-full max-w-[900px] mx-auto border border-rule bg-ink/5 mb-8">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={loaded.src}
-                    alt={loaded.label}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 900px"
-                    className="object-contain"
-                    unoptimized={loaded.src.startsWith("blob:")}
-                  />
-                  {result && hoveredBottleIds && (
-                    <BoxOverlay
-                      bottles={result.bottles.filter((b) =>
-                        hoveredBottleIds.includes(b.id)
-                      )}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
-
             {error && (
               <div className="mb-6">
                 <ErrorBanner code={error.error} onDismiss={reset} />
               </div>
             )}
 
-            {stage === "done" && rows.length > 0 && (
+            {stage === "done" && rows.length > 0 && loaded && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
                 className="space-y-6"
               >
-                <SummaryStrip wines={rows} />
+                <SummaryStrip
+                  wines={rows}
+                  imageSrc={loaded.src}
+                  imageLabel={loaded.label}
+                  unoptimized={loaded.src.startsWith("blob:")}
+                />
 
                 {allLow && <AllLowConfidenceBanner />}
+
+                {result?.narrative && (
+                  <div className="border border-rule bg-bone px-6 py-5 sm:px-8 sm:py-6">
+                    <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted mb-3">
+                      Analysis notes
+                    </div>
+                    <p className="text-[15px] sm:text-[16px] text-ink leading-relaxed">
+                      {result.narrative}
+                    </p>
+                  </div>
+                )}
 
                 <ResultsTable
                   rows={rows}
                   onChange={setRows}
-                  onHoverRow={setHoveredBottleIds}
                 />
 
                 <div className="flex items-center gap-3 flex-wrap">
@@ -322,11 +328,6 @@ export default function Page() {
                     <RotateCcw className="h-3.5 w-3.5" />
                     Try another shelf
                   </button>
-                  {result?.imageQualityNotes && (
-                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted ml-1">
-                      {result.imageQualityNotes}
-                    </span>
-                  )}
                 </div>
               </motion.div>
             )}
@@ -388,29 +389,3 @@ function Stat({
   );
 }
 
-function BoxOverlay({
-  bottles,
-}: {
-  bottles: { id: string; bbox: { x: number; y: number; w: number; h: number } }[];
-}) {
-  return (
-    <svg
-      viewBox="0 0 1000 750"
-      preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full pointer-events-none"
-    >
-      {bottles.map((b) => (
-        <rect
-          key={b.id}
-          x={b.bbox.x * 1000}
-          y={b.bbox.y * 750}
-          width={b.bbox.w * 1000}
-          height={b.bbox.h * 750}
-          fill="rgba(92,26,31,0.10)"
-          stroke="#5c1a1f"
-          strokeWidth={2.5}
-        />
-      ))}
-    </svg>
-  );
-}

@@ -17,6 +17,8 @@ Coordinates are normalised 0-1 from top-left. Be conservative: only count bottle
 
 Output ONLY the JSON object, no preamble, no markdown fences, no commentary.`;
 
+export const NARRATIVE_SYSTEM = `You are a wine cellar stocktake assistant. Write an extremely terse run summary in two sentences maximum. First sentence: state the count of bottles identified cleanly (confidence >= 85) — use the format "[N] identified cleanly" and nothing more. Second sentence (only include if there are bottles with confidence below 70): briefly name the specific problem for each difficult case, e.g. "2 flagged — price tags obscured labels; 1 possible non-bottle item detected." Omit the second sentence entirely if all bottles scored 70 or above. Do not comment on medium-confidence bottles (70-84) unless the cause is notable. Use British spelling. Plain prose only — no bullets, no headers, no markdown.`;
+
 export const IDENTIFICATION_SYSTEM = `You are a wine identification expert. You will be shown a photograph of wine bottles and a list of bottle positions detected in a previous pass. For each bottle, extract what you can see on the label.
 
 Critical rules:

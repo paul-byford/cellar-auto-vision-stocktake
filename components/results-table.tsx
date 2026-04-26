@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, AlertTriangle, Flag } from "lucide-react";
+import { Check, AlertTriangle, Flag, PencilLine } from "lucide-react";
 import { useState } from "react";
 import type { WineRow } from "@/lib/types";
 import { formatGbp } from "@/lib/wine-prices";
@@ -77,7 +77,10 @@ function EditableCell({
         }
       }}
       className={cn(
-        "block min-w-[2ch] cursor-text rounded-[2px] px-1 -mx-1",
+        "block min-w-[2ch] cursor-text px-1 -mx-1",
+        "border-b border-dashed border-transparent",
+        "hover:border-rule transition-colors duration-150",
+        "focus:border-oxblood focus:outline-none",
         !value && "text-muted/60",
         className
       )}
@@ -98,6 +101,12 @@ export function ResultsTable({ rows, onChange, onHoverRow }: Props) {
 
   return (
     <div className="border border-rule bg-bone overflow-hidden">
+      <div className="px-4 py-2 hairline-b flex items-center gap-1.5">
+        <PencilLine className="h-3 w-3 text-muted shrink-0" strokeWidth={1.75} />
+        <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted">
+          Tap producer, wine or vintage to edit
+        </span>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>

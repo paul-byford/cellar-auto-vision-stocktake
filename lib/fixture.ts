@@ -5,6 +5,7 @@ import type { AnalysisResult } from "./types";
 // band.
 export const sampleResult: AnalysisResult = {
   imageQualityNotes: "Mixed angles, slight glare on top shelf",
+  narrative: "",
   imageWidth: 1600,
   imageHeight: 1067,
   bottles: [

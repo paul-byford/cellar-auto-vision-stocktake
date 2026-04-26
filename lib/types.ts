@@ -40,6 +40,7 @@ export type AnalysisResult = {
   bottles: { id: string; bbox: BBox }[];
   wines: WineRow[];
   imageQualityNotes: string;
+  narrative: string;
   imageWidth: number;
   imageHeight: number;
 };

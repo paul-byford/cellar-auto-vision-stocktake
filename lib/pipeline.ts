@@ -7,7 +7,7 @@ import type {
   WineRow,
 } from "./types";
 import { getAnthropic, VISION_MODEL } from "./anthropic";
-import { DETECTION_SYSTEM, IDENTIFICATION_SYSTEM } from "./prompts";
+import { DETECTION_SYSTEM, IDENTIFICATION_SYSTEM, NARRATIVE_SYSTEM } from "./prompts";
 import { priceFor } from "./wine-prices";
 
 type ImageInput = {
@@ -283,6 +283,54 @@ export function aggregate(
   return rows;
 }
 
+const NARRATIVE_MODEL = "claude-haiku-4-5-20251001";
+
+async function runNarrative(
+  detection: DetectionResult,
+  wines: WineRow[],
+  signal?: AbortSignal
+): Promise<string> {
+  try {
+    const client = getAnthropic();
+    const context = {
+      bottles_detected: detection.totalCount,
+      image_quality_notes: detection.imageQualityNotes,
+      unique_wines: wines.length,
+      total_bottle_count: wines.reduce((s, w) => s + w.count, 0),
+      low_confidence_count: wines.filter((w) => w.confidence < 70).length,
+      wines: wines.map((w) => ({
+        producer: w.producer,
+        wine: w.wine,
+        vintage: w.vintage,
+        count: w.count,
+        confidence: w.confidence,
+        reasoning: w.reasoning,
+      })),
+    };
+    const resp = await client.messages.create(
+      {
+        model: NARRATIVE_MODEL,
+        max_tokens: 250,
+        system: NARRATIVE_SYSTEM,
+        messages: [
+          {
+            role: "user",
+            content: `Results:\n\n${JSON.stringify(context, null, 2)}`,
+          },
+        ],
+      },
+      { signal }
+    );
+    return resp.content
+      .filter((b): b is Anthropic.TextBlock => b.type === "text")
+      .map((b) => b.text)
+      .join(" ")
+      .trim();
+  } catch {
+    return "";
+  }
+}
+
 export async function runPipeline(
   image: ImageInput,
   imageWidth: number,
@@ -292,10 +340,12 @@ export async function runPipeline(
   const detection = await runDetection(image, signal);
   const identified = await runIdentification(image, detection.bottles, signal);
   const wines = aggregate(detection, identified);
+  const narrative = await runNarrative(detection, wines, signal);
   return {
     bottles: detection.bottles.map((b) => ({ id: b.id, bbox: b.bbox })),
     wines,
     imageQualityNotes: detection.imageQualityNotes,
+    narrative,
     imageWidth,
     imageHeight,
   };

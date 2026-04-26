@@ -5,7 +5,7 @@ import type { ApiErrorBody, ApiErrorCode } from "@/lib/types";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const TIMEOUT_MS = 30_000;
+const TIMEOUT_MS = 55_000;
 
 type ImageMediaType = "image/jpeg" | "image/png" | "image/webp" | "image/gif";
 
